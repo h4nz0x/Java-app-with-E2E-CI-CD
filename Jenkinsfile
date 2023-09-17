@@ -15,7 +15,7 @@ pipeline{
         }
         stage("Checkout from SCM"){
             steps{
-                git branch: 'main', credentialsId: 'github' url: 'https://github.com/h4nz0x/Java-app-with-E2E-CI-CD'
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/h4nz0x/Java-app-with-E2E-CI-CD'
             }
             
         }
