@@ -6,6 +6,15 @@ pipeline{
         jdk 'Java17'
         maven 'Maven3'
     }
+    environment {
+        APP_NAME = "Java-app-with-E2E-CI/CD"
+        RELEASE = "1.0.0"
+        DOCKER_USER = "h4nz0x"
+        DOCKER_PASS = "dockerhub"
+        IMAGE_NAME = "${DOCKER_USER}" + "/" + "${APP_NAME}"
+        IMAGE_TAG = "${RELEASE}-${BUILD_NUMBER}
+    }
+
     stages{
         stage("CleanUp Workspace"){
             steps{
@@ -13,24 +22,28 @@ pipeline{
             }
             
         }
+
         stage("Checkout from SCM"){
             steps{
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/h4nz0x/Java-app-with-E2E-CI-CD'
             }
             
         }
+
         stage("Build Application"){
             steps{
                 sh "mvn clean package"
             }
             
         }
+
         stage("Test Application"){
             steps{
                 sh "mvn test"
             }
             
         }
+
         stage("SonarQube Analysis"){
             steps{
                 script {
@@ -41,10 +54,27 @@ pipeline{
             }
             
         }
+
         stage("Quality Gate"){
             steps{
                 script {
                    waitForQualityGate abortPipeline: false, credentialsId: 'jenkins-sonarqube-token'
+                }
+            }
+            
+        }
+
+        stage("Build and Push Docker Image"){
+            steps{
+                script {
+                   docker.withRegistry('',DOCKER_PASS){
+                        docker_image = docker.build "${IMAGE_NAME}"
+                   }
+
+                   docker.withRegistry('',DOCKER_PASS){
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                   }
                 }
             }
             
