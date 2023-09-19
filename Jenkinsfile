@@ -7,7 +7,7 @@ pipeline{
         maven 'Maven3'
     }
     environment {
-        APP_NAME = "Java-app-with-E2E-CI/CD"
+        APP_NAME = "Java-app-with-e2e-ci/cd"
         RELEASE = "1.0.0"
         DOCKER_USER = "h4nz0x"
         DOCKER_PASS = "dockerhub"
